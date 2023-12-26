@@ -17,7 +17,7 @@ public class FteamAuthAttribute : ControllerAttribute, IAsyncActionFilter
         SetDependencies(context.HttpContext);
 
         FteamController? controller = context.Controller as FteamController;
-        await FindUserAndSetToController(context.HttpContext, controller);
+        await FindUserAndSetToControllerAsync(context.HttpContext, controller);
 
         await next();
     }
@@ -27,12 +27,17 @@ public class FteamAuthAttribute : ControllerAttribute, IAsyncActionFilter
         _user = httpContext.RequestServices.GetService<IUser>();
     }
 
-    async Task FindUserAndSetToController(HttpContext context, FteamController? controller)
+    async Task FindUserAndSetToControllerAsync(HttpContext context, FteamController? controller)
     {
         if (controller is null || _user is null)
             return;
 
         IHeaderDictionary headers = context.Request.Headers;
+        await FindUserAsync(headers,controller);
+    }
+
+    async Task FindUserAsync(IHeaderDictionary headers,FteamController controller)
+    {
         var user = await _user.FindUserWithTokenAsync(headers[AuthToken]);
         if (user is not null)
             controller.FtmUser = user;
