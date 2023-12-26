@@ -1,0 +1,6 @@
+@Fteam.CostumController.Test_HostAddress = http://localhost:5107
+
+GET {{Fteam.CostumController.Test_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
